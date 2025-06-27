@@ -1,31 +1,35 @@
 // src/App.jsx
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import Dashboard from "./pages/Dashboard";
-import { useState } from "react";
 
 export default function App() {
-  const [isLogin, setIsLogin] = useState(true);
-
-  const toggleForm = () => setIsLogin(!isLogin);
-
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+
         <Route
-          path="/"
+          path="/login"
           element={
             <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-              {isLogin ? (
-                <LoginForm switchMode={toggleForm} />
-              ) : (
-                <RegisterForm switchMode={toggleForm} />
-              )}
+              <LoginForm />
             </div>
           }
         />
+
+        <Route
+          path="/register"
+          element={
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+              <RegisterForm />
+            </div>
+          }
+        />
+
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );

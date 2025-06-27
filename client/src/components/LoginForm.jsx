@@ -1,11 +1,13 @@
 // src/components/LoginForm.jsx
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function LoginForm({ switchMode }) {
+export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [msg, setMsg] = useState(""); // For feedback message
+  const [msg, setMsg] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -14,8 +16,12 @@ export default function LoginForm({ switchMode }) {
         email,
         password,
       });
-      console.log("✅ Login success:", res.data);
-      setMsg("Login successful!");
+
+      // ✅ Save token
+      localStorage.setItem("token", res.data.token);
+
+      setMsg("✅ Login successful!");
+      navigate("/dashboard"); // Redirect to dashboard
     } catch (err) {
       console.error("❌ Login error:", err.response?.data || err.message);
       setMsg(err.response?.data?.msg || "Login failed");
@@ -48,17 +54,17 @@ export default function LoginForm({ switchMode }) {
         >
           Login
         </button>
-
-        {/* Show message */}
         {msg && (
-          <p className="text-center text-sm mt-2 text-green-600">{msg}</p>
+          <p className={`text-center text-sm mt-2 ${msg.includes("success") ? "text-green-600" : "text-red-600"}`}>
+            {msg}
+          </p>
         )}
       </form>
       <p className="text-sm mt-4 text-center">
         Don't have an account?{" "}
-        <button onClick={switchMode} className="text-blue-600 underline">
+        <a href="/register" className="text-blue-600 underline">
           Register
-        </button>
+        </a>
       </p>
     </div>
   );
