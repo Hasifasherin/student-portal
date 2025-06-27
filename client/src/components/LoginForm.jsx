@@ -1,14 +1,25 @@
 // src/components/LoginForm.jsx
 import { useState } from "react";
+import axios from "axios";
 
 export default function LoginForm({ switchMode }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [msg, setMsg] = useState(""); // For feedback message
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Login with:", email, password);
-    // send data to backend later
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
+      console.log("✅ Login success:", res.data);
+      setMsg("Login successful!");
+    } catch (err) {
+      console.error("❌ Login error:", err.response?.data || err.message);
+      setMsg(err.response?.data?.msg || "Login failed");
+    }
   };
 
   return (
@@ -31,9 +42,17 @@ export default function LoginForm({ switchMode }) {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
           Login
         </button>
+
+        {/* Show message */}
+        {msg && (
+          <p className="text-center text-sm mt-2 text-green-600">{msg}</p>
+        )}
       </form>
       <p className="text-sm mt-4 text-center">
         Don't have an account?{" "}

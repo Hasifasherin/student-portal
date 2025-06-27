@@ -1,7 +1,9 @@
 // src/App.jsx
-import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
+import Dashboard from "./pages/Dashboard";
+import { useState } from "react";
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,8 +11,22 @@ export default function App() {
   const toggleForm = () => setIsLogin(!isLogin);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      {isLogin ? <LoginForm switchMode={toggleForm} /> : <RegisterForm switchMode={toggleForm} />}
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+              {isLogin ? (
+                <LoginForm switchMode={toggleForm} />
+              ) : (
+                <RegisterForm switchMode={toggleForm} />
+              )}
+            </div>
+          }
+        />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
   );
 }
